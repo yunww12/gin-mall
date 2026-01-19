@@ -108,9 +108,12 @@ type Cache struct {
 }
 
 type Es struct {
-	EsHost  string `yaml:"esHost"`
-	EsPort  string `yaml:"esPort"`
-	EsIndex string `yaml:"esIndex"`
+	EsHost       string `yaml:"esHost"`
+	EsPort       string `yaml:"esPort"`
+	EsIndex      string `yaml:"esIndex"`
+	ProductIndex string `yaml:"productIndex"`
+	UserName     string `yaml:"username"`
+	Password     string `yaml:"password"`
 }
 
 func InitConfig() {

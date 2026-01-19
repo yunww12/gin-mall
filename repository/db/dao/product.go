@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/CocaineCong/gin-mall/repository/db/model"
+	"github.com/CocaineCong/gin-mall/repository/es"
 	"github.com/CocaineCong/gin-mall/types"
 )
 
@@ -63,10 +64,15 @@ func (dao *ProductDao) CountProductByCondition(condition map[string]interface{})
 
 // DeleteProduct 删除商品
 func (dao *ProductDao) DeleteProduct(pId, uId uint) error {
-	return dao.DB.Model(&model.Product{}).
+	product := model.Product{}
+	err := dao.DB.Model(&model.Product{}).
 		Where("id = ? AND boss_id = ?", pId, uId).
-		Delete(&model.Product{}).
+		Take(&product).Delete(&product).
 		Error
+	if err != nil {
+		return err
+	}
+	return es.DeleteProductFromEs(pId)
 }
 
 // UpdateProduct 更新商品
@@ -92,5 +98,15 @@ func (dao *ProductDao) SearchProduct(info string, page types.BasePage) (products
 		Count(&count).
 		Error
 
+	return
+}
+
+func (dao *ProductDao) SearchProductByIds(ids []uint, page types.BasePage) (products []*model.Product, count int64, err error) {
+	err = dao.DB.Model(&model.Product{}).
+		Where("id IN ?", ids).
+		Offset((page.PageNum - 1) * page.PageSize).
+		Limit(page.PageSize).
+		Find(&products).Error
+	count = int64(len(products))
 	return
 }

@@ -25,6 +25,13 @@ type Product struct {
 	BossAvatar    string
 }
 
+type EsProduct struct {
+	Name  string `json:"name"`
+	Title string `json:"title"`
+	Info  string `json:"info"`
+	ID    uint   `json:"id"`
+}
+
 // View 获取点击数
 func (product *Product) View() uint64 {
 	countStr, _ := cache.RedisClient.Get(cache.RedisContext, cache.ProductViewKey(product.ID)).Result()

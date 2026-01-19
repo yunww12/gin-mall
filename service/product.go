@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"strconv"
 	"sync"
@@ -13,6 +14,7 @@ import (
 	util "github.com/CocaineCong/gin-mall/pkg/utils/upload"
 	"github.com/CocaineCong/gin-mall/repository/db/dao"
 	"github.com/CocaineCong/gin-mall/repository/db/model"
+	"github.com/CocaineCong/gin-mall/repository/es"
 	"github.com/CocaineCong/gin-mall/types"
 )
 
@@ -104,7 +106,7 @@ func (s *ProductSrv) ProductCreate(ctx context.Context, files []*multipart.FileH
 		log.LogrusObj.Error(err)
 		return
 	}
-
+	es.SyncProductInfoToEs(product) // TODO: sync in go rutine
 	wg := new(sync.WaitGroup)
 	wg.Add(len(files))
 	for index, file := range files {
@@ -191,6 +193,7 @@ func (s *ProductSrv) ProductDelete(ctx context.Context, req *types.ProductDelete
 		log.LogrusObj.Error(err)
 		return
 	}
+	err = es.DeleteProductFromEs(req.ID)
 	return
 }
 
@@ -211,13 +214,36 @@ func (s *ProductSrv) ProductUpdate(ctx context.Context, req *types.ProductUpdate
 		log.LogrusObj.Error(err)
 		return
 	}
+	esProduct := &model.EsProduct{
+		ID:    req.ID,
+		Name:  product.Name,
+		Title: product.Title,
+		Info:  product.Info,
+	}
+	err = es.UpdateProductFromEs(req.ID, esProduct)
 
 	return
 }
 
 // 搜索商品 TODO 后续用脚本同步数据MySQL到ES，用ES进行搜索
 func (s *ProductSrv) ProductSearch(ctx context.Context, req *types.ProductSearchReq) (resp interface{}, err error) {
-	products, count, err := dao.NewProductDao(ctx).SearchProduct(req.Info, req.BasePage)
+	var products []*model.Product
+	var count int64
+	if req.Name != "" {
+		var ids []uint
+		esProducts := es.SearchProductFromEs(req.Name, uint(req.PageNum), uint(req.PageSize))
+		if len(esProducts) > 0 {
+			for _, product := range esProducts {
+				ids = append(ids, product.ID)
+			}
+
+		}
+		products, count, err = dao.NewProductDao(ctx).SearchProductByIds(ids, req.BasePage)
+		fmt.Println("search from es success:", products)
+	} else {
+		products, count, err = dao.NewProductDao(ctx).SearchProduct(req.Info, req.BasePage)
+	}
+
 	if err != nil {
 		log.LogrusObj.Error(err)
 		return
