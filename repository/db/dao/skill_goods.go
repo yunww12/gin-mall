@@ -36,3 +36,9 @@ func (dao *SkillGoodsDao) ListSkillGoods() (resp []*model.SkillProduct, err erro
 
 	return
 }
+
+// 库存扣减，使用事务保证数据一致性
+// TODO:结合订单系统
+func (dao *SkillGoodsDao) SkillGoods() (productId uint, num uint, err error) {
+
+}

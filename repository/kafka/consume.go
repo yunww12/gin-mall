@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"go.uber.org/zap"
 
 	"github.com/CocaineCong/gin-mall/pkg/utils/log"

@@ -73,3 +73,7 @@ type ProductResp struct {
 	BossName      string `json:"boss_name"`
 	BossAvatar    string `json:"boss_avatar"`
 }
+
+type ProductMQ struct {
+	ProductId uint
+}

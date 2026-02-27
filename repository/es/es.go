@@ -24,6 +24,7 @@ func InitEs() {
 	if err != nil {
 		log.Panic(err)
 	}
+	fmt.Println("wly: connected to elasticsearch")
 	EsClient = client
 }
 
