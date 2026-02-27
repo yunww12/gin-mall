@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"go.uber.org/zap"
 
 	conf "github.com/CocaineCong/gin-mall/config"

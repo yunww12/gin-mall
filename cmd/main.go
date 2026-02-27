@@ -35,6 +35,7 @@ func loading() {
 	util.InitLog() // 如果接入ELK请进入这个func打开注释
 	fmt.Println("加载配置完成...")
 	go scriptStarting()
+	go rabbitmq.StartDeductStockConsumer()
 }
 
 func scriptStarting() {

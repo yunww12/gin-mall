@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -59,6 +60,7 @@ func ListSkillProductHandler() gin.HandlerFunc {
 func GetSkillProductHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req types.GetSkillProductReq
+		fmt.Println("GetSkillProductHandler")
 		if err := ctx.ShouldBind(&req); err != nil {
 			// 参数校验
 			log.LogrusObj.Infoln(err)
@@ -67,7 +69,11 @@ func GetSkillProductHandler() gin.HandlerFunc {
 		}
 
 		l := service.GetSkillProductSrv()
+		fmt.Println("GetSkillProductHandler1")
+
 		resp, err := l.GetSkillGoods(ctx.Request.Context(), &req)
+		fmt.Println("GetSkillProductHandler2")
+
 		if err != nil {
 			log.LogrusObj.Infoln(err)
 			ctx.JSON(http.StatusOK, ErrorResponse(ctx, err))

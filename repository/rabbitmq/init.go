@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"fmt"
 	"strings"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -19,5 +20,6 @@ func InitRabbitMQ() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("wly: RabbitMQ connection established")
 	GlobalRabbitMQ = conn
 }

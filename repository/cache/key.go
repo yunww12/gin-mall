@@ -7,9 +7,10 @@ import (
 
 const (
 	// RankKey 每日排名
-	RankKey             = "rank"
-	SkillProductKey     = "skill:product:%d"
-	SkillProductListKey = "skill:product_list"
+	RankKey            = "rank"
+	SkillProductKey    = "skill:product:%d"
+	SkillProductSetKey = "skill:product:ids"
+
 	SkillProductUserKey = "skill:user:%s"
 )
 
